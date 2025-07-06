@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
   Alert,
   CircularProgress,
   Paper,
@@ -15,6 +14,7 @@ import {
   Chip,
   Stack
 } from '@mui/material';
+
 import { Search, LocationOn, AccessTime, Thermostat, Opacity, Air, Visibility, WbSunny } from '@mui/icons-material';
 import { WeatherService } from '../services/weatherService';
 import type { WeatherResponse } from '../types/weather';
@@ -150,102 +150,86 @@ export function WeatherApp() {
               <Divider sx={{ my: 3 }} />
 
               {/* Main Weather Info */}
-              <Grid container spacing={3} alignItems="center" sx={{ mb: 3 }}>
-                <Grid item xs={12} md={6}>
-                  <Box textAlign="center">
-                    <Typography variant="h2" component="div" sx={{ fontWeight: 'bold' }}>
-                      {Math.round(weather.current.temp_c)}°C
-                    </Typography>
-                    <Typography variant="h6" color="text.secondary">
-                      ({Math.round(weather.current.temp_f)}°F)
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Box textAlign="center">
-                    <img
-                      src={`https:${weather.current.condition.icon}`}
-                      alt={weather.current.condition.text}
-                      style={{ width: 80, height: 80 }}
-                    />
-                    <Typography variant="h6" sx={{ mt: 1 }}>
-                      {weather.current.condition.text}
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 3, alignItems: 'center' }}>
+                <Box sx={{ flex: '1 1 300px', textAlign: 'center' }}>
+                  <Typography variant="h2" component="div" sx={{ fontWeight: 'bold' }}>
+                    {Math.round(weather.current.temp_c)}°C
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary">
+                    ({Math.round(weather.current.temp_f)}°F)
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: '1 1 300px', textAlign: 'center' }}>
+                  <img
+                    src={`https:${weather.current.condition.icon}`}
+                    alt={weather.current.condition.text}
+                    style={{ width: 80, height: 80 }}
+                  />
+                  <Typography variant="h6" sx={{ mt: 1 }}>
+                    {weather.current.condition.text}
+                  </Typography>
+                </Box>
+              </Box>
 
               <Divider sx={{ my: 3 }} />
 
               {/* Weather Details */}
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
-                    <Thermostat color="primary" sx={{ mb: 1 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      Feels like
-                    </Typography>
-                    <Typography variant="h6">
-                      {Math.round(weather.current.feelslike_c)}°C
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
-                    <Opacity color="primary" sx={{ mb: 1 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      Humidity
-                    </Typography>
-                    <Typography variant="h6">
-                      {weather.current.humidity}%
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
-                    <Air color="primary" sx={{ mb: 1 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      Wind
-                    </Typography>
-                    <Typography variant="h6">
-                      {weather.current.wind_kph} km/h
-                    </Typography>
-                    <Chip label={weather.current.wind_dir} size="small" sx={{ mt: 1 }} />
-                  </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
-                    <Visibility color="primary" sx={{ mb: 1 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      Visibility
-                    </Typography>
-                    <Typography variant="h6">
-                      {weather.current.vis_km} km
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Pressure
-                    </Typography>
-                    <Typography variant="h6">
-                      {weather.current.pressure_mb} mb
-                    </Typography>
-                  </Paper>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
-                    <WbSunny color="primary" sx={{ mb: 1 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      UV Index
-                    </Typography>
-                    <Typography variant="h6">
-                      {weather.current.uv}
-                    </Typography>
-                  </Paper>
-                </Grid>
-              </Grid>
+              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>
+                <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
+                  <Thermostat color="primary" sx={{ mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Feels like
+                  </Typography>
+                  <Typography variant="h6">
+                    {Math.round(weather.current.feelslike_c)}°C
+                  </Typography>
+                </Paper>
+                <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
+                  <Opacity color="primary" sx={{ mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Humidity
+                  </Typography>
+                  <Typography variant="h6">
+                    {weather.current.humidity}%
+                  </Typography>
+                </Paper>
+                <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
+                  <Air color="primary" sx={{ mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Wind
+                  </Typography>
+                  <Typography variant="h6">
+                    {weather.current.wind_kph} km/h
+                  </Typography>
+                  <Chip label={weather.current.wind_dir} size="small" sx={{ mt: 1 }} />
+                </Paper>
+                <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
+                  <Visibility color="primary" sx={{ mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Visibility
+                  </Typography>
+                  <Typography variant="h6">
+                    {weather.current.vis_km} km
+                  </Typography>
+                </Paper>
+                <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Pressure
+                  </Typography>
+                  <Typography variant="h6">
+                    {weather.current.pressure_mb} mb
+                  </Typography>
+                </Paper>
+                <Paper elevation={2} sx={{ p: 2, textAlign: 'center' }}>
+                  <WbSunny color="primary" sx={{ mb: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    UV Index
+                  </Typography>
+                  <Typography variant="h6">
+                    {weather.current.uv}
+                  </Typography>
+                </Paper>
+              </Box>
             </CardContent>
           </Card>
         )}
