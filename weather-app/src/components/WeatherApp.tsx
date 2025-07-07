@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Box,
@@ -12,11 +12,14 @@ import {
   Paper,
   Divider,
   Chip,
-  Stack
+  Stack,
+  Autocomplete,
+  ListItem,
+  ListItemText
 } from '@mui/material';
 
 import { Search, LocationOn, AccessTime, Thermostat, Opacity, Air, Visibility, WbSunny } from '@mui/icons-material';
-import { getCurrentWeather } from '../services/weatherService';
+import { getCurrentWeather, searchCities, type Location } from '../services/weatherService';
 import type { WeatherResponse } from '../types/weather';
 
 export function WeatherApp() {
@@ -24,17 +27,42 @@ export function WeatherApp() {
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<Location[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!city.trim()) return;
+  // Debounced search for autocomplete
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (city.length >= 2) {
+        setSearchLoading(true);
+        try {
+          const results = await searchCities(city);
+          setSuggestions(results);
+        } catch (err) {
+          console.error('Search error:', err);
+          setSuggestions([]);
+        } finally {
+          setSearchLoading(false);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [city]);
+
+  const handleSearch = async (selectedCity?: string) => {
+    const cityToSearch = selectedCity || city;
+    if (!cityToSearch.trim()) return;
 
     setLoading(true);
     setError(null);
     
     try {
-      const weatherData = await getCurrentWeather(city);
+      const weatherData = await getCurrentWeather(cityToSearch);
       setWeather(weatherData);
+      setCity(cityToSearch);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch weather data');
       setWeather(null);
@@ -75,32 +103,74 @@ export function WeatherApp() {
           🌤️ Weather App
         </Typography>
 
-        <Box component="form" onSubmit={handleSearch} sx={{ mb: 3 }}>
+        <Box sx={{ mb: 3 }}>
           <Stack direction="row" spacing={2} sx={{ maxWidth: 500, mx: 'auto' }}>
-            <TextField
+            <Autocomplete
               fullWidth
+              freeSolo
+              options={suggestions}
+              getOptionLabel={(option) => {
+                if (typeof option === 'string') return option;
+                return `${option.name}, ${option.region}, ${option.country}`;
+              }}
+              loading={searchLoading}
               value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Enter city name..."
-              variant="outlined"
-              disabled={loading}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  borderRadius: 3,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  },
-                  '&.Mui-focused': {
-                    backgroundColor: 'white',
-                  }
+              onChange={(_, newValue) => {
+                if (typeof newValue === 'string') {
+                  setCity(newValue);
+                } else if (newValue) {
+                  setCity(newValue.name);
+                  handleSearch(newValue.name);
                 }
+              }}
+              onInputChange={(_, newInputValue) => {
+                setCity(newInputValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Enter city name..."
+                  variant="outlined"
+                  disabled={loading}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {searchLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      borderRadius: 3,
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: 'white',
+                      }
+                    }
+                  }}
+                />
+              )}
+              renderOption={(props, option) => {
+                const { key, ...otherProps } = props;
+                return (
+                  <ListItem key={key} {...otherProps}>
+                    <ListItemText
+                      primary={option.name}
+                      secondary={`${option.region}, ${option.country}`}
+                    />
+                  </ListItem>
+                );
               }}
             />
             <Button
-              type="submit"
               variant="contained"
               disabled={loading}
+              onClick={() => handleSearch()}
               startIcon={loading ? <CircularProgress size={20} /> : <Search />}
               sx={{
                 borderRadius: 3,
