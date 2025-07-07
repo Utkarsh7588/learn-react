@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 
 import { Search, LocationOn, AccessTime, Thermostat, Opacity, Air, Visibility, WbSunny } from '@mui/icons-material';
-import { WeatherService } from '../services/weatherService';
+import { getCurrentWeather } from '../services/weatherService';
 import type { WeatherResponse } from '../types/weather';
 
 export function WeatherApp() {
@@ -33,7 +33,7 @@ export function WeatherApp() {
     setError(null);
     
     try {
-      const weatherData = await WeatherService.getCurrentWeather(city);
+      const weatherData = await getCurrentWeather(city);
       setWeather(weatherData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch weather data');

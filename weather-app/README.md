@@ -1,6 +1,62 @@
-# React + TypeScript + Vite
+# Weather App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React weather application built with TypeScript and Vite that provides current weather information and forecasts.
+
+## Features
+
+- Current weather display
+- Weather forecasts
+- Location-based weather
+- City search with autocomplete
+- Responsive design with Material-UI
+- Caching for improved performance
+
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment Variables
+
+Create a `.env` file in the root directory and add your Weather API key:
+
+```env
+VITE_WEATHER_API_KEY=your_weather_api_key_here
+```
+
+**Get your API key from:** [WeatherAPI.com](https://www.weatherapi.com/)
+
+### 3. Run the Application
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## Weather Service
+
+The application uses a comprehensive weather service (`src/services/weatherService.ts`) that includes:
+
+- **API Key Management**: Uses environment variables for secure API key storage
+- **Caching**: Implements 10-minute cache to reduce API calls
+- **Error Handling**: Custom error classes with proper error messages
+- **Multiple Methods**:
+  - `getCurrentWeather(city)` - Get weather by city name
+  - `getCurrentWeatherByCoords(lat, lon)` - Get weather by coordinates
+  - `getForecast(city, days)` - Get weather forecast
+  - `searchCities(query)` - Search for cities
+  - `getWeatherByLocation()` - Get weather for user's location
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
 
 Currently, two official plugins are available:
 
